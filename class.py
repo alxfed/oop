@@ -24,8 +24,10 @@ class Account(object):
     def inquire(self):
         return self.balance
 
+
 def main():
     a_1 = Account('Alex', 10)
+    a_1.deposit(100)
     a_2 = Account('Alexander', 5)
     bal = a_1.inquire()
     del a_1
