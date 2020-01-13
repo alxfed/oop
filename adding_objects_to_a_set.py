@@ -37,6 +37,8 @@ only in terms of age).
 
 
 def main():
+    a = set()
+    b = a
     return
 
 
