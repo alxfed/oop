@@ -2,6 +2,9 @@
 """...
 """
 class Transform(object):
+    '''
+    first we instantiane an object transform, then call it.
+    '''
     def __init__(self, parameter):
         self.scale = parameter
 
