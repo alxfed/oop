@@ -10,6 +10,7 @@ def print_args(function):
              return None
      return wrapper
 
+
 @print_args
 def write(text, mext, kwarg:str):
     print(text, mext)
