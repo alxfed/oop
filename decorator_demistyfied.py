@@ -4,19 +4,23 @@
 def print_args(function):
      def wrapper(*args, **kwargs):
          print('Arguments:', args, kwargs) # this is the additional functionality the whole story has been started for
-         return function(*args, **kwargs)
+         if args[1] == 'bar':
+             return function(*args, **kwargs)
+         else:
+             return None
      return wrapper
 
 @print_args
-def write(text, kwarg:str):
-    print(text)
+def write(text, mext, kwarg:str):
+    print(text, mext)
+    print(kwarg)
 
 
 def main():
-    write('foo', kwarg='one kwarg')
+    write('foo', 'bar', kwarg='one kwarg')
     return
 
 
 if __name__ == '__main__':
     main()
-    print('main - done')
+    print('\nmain - done')
