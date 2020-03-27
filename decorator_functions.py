@@ -2,6 +2,7 @@
 """...
 """
 def print_args(function):
+
      def wrapper(*args, **kwargs):
          print('Arguments:', args, kwargs) # this is the additional functionality the whole story has been started for
          if args[1] == 'bar':
