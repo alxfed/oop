@@ -1,70 +1,78 @@
 # -*- coding: utf-8 -*-
 """...
 """
-from typing import List, Dict, Optional, Union
+from typing import List, Dict, Optional, Union, Literal
 from pydantic import BaseModel
 from enum import Enum
+from json import loads
 
-
-class ExperimentDescription(BaseModel):
-    project                 : str
-    platform                : List[str]
-    user_type               : str
-    traffic_type            : str
-    module                  : str
-    main_description        : Optional[str]
-
-
-class SearchSpaceDescription(BaseModel):
-    parameters              : Dict
-
-
-class EvaluationOptionsDescription(BaseModel):
-    mode                    : str
-
-
-class GeneratorRunType(Enum):
-    DEFAULT: 0
-    STATUS_QUO: 1
+class ModuleName(str, Enum):
+    bandit                  = 'bandit'
+    bayesian_optimization   = "bayesian_optimization"
+    constrained             = 'constrained_optimization'
 
 
 class ExperimentType(str, Enum):
-    fake = 'fake'
-    real = 'real'
+    fake        = 'fake'
+    real        = 'real'
 
 
-class SearchSpaceDesc(BaseModel):
-    parameters: Dict
-    parameter_constraints: Optional[Dict]
+class ProjectCode(str, Enum):
+    tbz         = 'tbz'
+    tbz_alpha   = 'tbz_alpha'
+    tsi         = 'tsi'
+    stt         = 'stt'
 
 
-class MetricsWeights(BaseModel):
-    str_floats: Dict[str, float]
+class PlatformName(str, Enum):
+    windows     = 'windows'
+    amazon      = 'amazon'
+    ios         = 'ios'
+    android     = 'android'
+    samsung     = 'samsung'
+    beta        = 'beta'
+    alpha       = 'alpha'
 
 
-class MetricName(BaseModel):
-    metric : str
+class UserType(str, Enum):
+    all         = 'all'
+    new         = 'new'
+    old         = 'old'
 
-class MetricWeight(BaseModel):
-    weight : float
+
+class TrafficType(str, Enum):
+    all         = 'all'
+    organic     = 'organic'
+    paid        = 'paid'
 
 
-class ExperimentMeta(BaseModel):
-    experiment_type         : ExperimentType = ExperimentType.fake
+class TestDescription(BaseModel):
+    project                 : ProjectCode
+    platform                : List[PlatformName]
+    user_type               : UserType
+    traffic_type            : TrafficType
+    module                  : ModuleName
+    main_description        : str
+
+
+class SearchSpaceDescription(BaseModel):
+    parameters              : Dict[str, dict]
+    parameter_constraints   : Optional[Dict[str, dict]]
+
+
+class ExperimentDescription(BaseModel):
+    experiment_type         : ExperimentType
     project                 : str
     platform                : str
-    user_type               : str
-    traffic_type            : str
+    user_type               : UserType
+    traffic_type            : TrafficType
     test_name               : str
-    test_description        : Dict
+    test_description        : TestDescription
     arms_to_generate        : int
-    search_space            : SearchSpaceDesc
+    search_space            : SearchSpaceDescription
     control_group           : Dict
     metrics_weights         : Dict[str, float]
-    evaluation_options      : EvaluationOptionsDescription
-
-    class Config:
-        orm_mode = True
+    evaluation_options      : Dict
 
 json_data = {
     "experiment_type": "fake",
@@ -76,7 +84,7 @@ json_data = {
     "test_description" :
     {
         "project": "stt",
-        "platform": ["ios", "android"],
+        "platform": ["ios", "android"], # platformS would be much better here
         "user_type": "new",
         "traffic_type": "all",
         "module": "bayesian_optimization",
@@ -105,5 +113,7 @@ json_data = {
     }
 }
 
-a = ExperimentMeta(**json_data)
+c = ExperimentDescription(**json_data)
+a = c.dict(include={'test_description': {'platform'}}) # https://pydantic-docs.helpmanual.io/usage/exporting_models/#advanced-include-and-exclude
+b = loads(c.json(include={'main_description'}))
 print('ok')
